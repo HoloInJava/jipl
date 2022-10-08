@@ -17,7 +17,7 @@ If your user has to write some code in your Java software, it can be a challenge
 Being as **beginner-friendly** as possible with its **easy syntax**, JIPL offers a [large toolkit](https://github.com/HoloInJava/jipl) of built-in functions while remaining as concise as possible.
 
 # Quickstart
-After downloading the [`JIPL.jar`](https://github.com/HoloInJava/jipl/blob/master/JIPL.jar) file provided, there is a handful of ways you can use it.
+After downloading the [`JIPL.jar`](https://github.com/HoloInJava/jipl/raw/master/JIPL.jar) file provided, there is a handful of ways you can use it.
 ## Implement it in your project
 You can add the given jar file in your **project**, you will then have access to the entirety of the JIPL project from the Java perspective. <br>
 Here is how you can add the jar file to your project using [Eclipse](https://stackoverflow.com/questions/3280353/how-to-import-a-jar-in-eclipse), or [IntelliJ IDEA](https://www.geeksforgeeks.org/how-to-add-external-jar-file-to-an-intellij-idea-project/). <br>
@@ -39,3 +39,10 @@ Or, in a more practical way, you can add file names as arguments to the command,
 This section will quickly go trough every feature currently available in JIPL, further examples can be found in the [`/examples`](https://github.com/HoloInJava/jipl/tree/master/examples) folder. Also, please feel free to suggest any new example from your creation, we`ll gladly add it!
 
 ## Variables
+```python
+var a = 10;
+```
+### Syntactic sugar
+```python
+a++;
+```
