@@ -16,6 +16,11 @@
 If your user has to write some code in your Java software, it can be a challenge to make it work properly, and that is *exactly* why we created this project. <br>
 Being as **beginner-friendly** as possible with its **easy syntax**, JIPL offers a [large toolkit](https://github.com/HoloInJava/jipl) of built-in functions while remaining as concise as possible.
 
+# Quickstart
+After downloading the [`JIPL.jar`](https://github.com/HoloInJava/jipl/blob/master/JIPL.jar) file provided, there is a handful of ways you can use it.
+## Implement it in your project
+You can add the given jar file in your project, you will then have access to all the functions
+
 # A Quick Documentation :page_with_curl:
 This section will quickly go trough every feature currently available in JIPL, further examples can be found in the `/src/examples` folder.
 
