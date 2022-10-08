@@ -19,7 +19,7 @@ Being as **beginner-friendly** as possible with its **easy syntax**, JIPL offers
 # Quickstart
 After downloading the [`JIPL.jar`](https://github.com/HoloInJava/jipl/blob/master/JIPL.jar) file provided, there is a handful of ways you can use it.
 ## Implement it in your project
-You can add the given jar file in your project, you will then have access to the entirety of the JIPL project from the Java perspective. <br>
+You can add the given jar file in your **project**, you will then have access to the entirety of the JIPL project from the Java perspective. <br>
 Here is how you can add the jar file to your project using [Eclipse](https://stackoverflow.com/questions/3280353/how-to-import-a-jar-in-eclipse), or [IntelliJ IDEA](https://www.geeksforgeeks.org/how-to-add-external-jar-file-to-an-intellij-idea-project/). <br>
 
 The following block is an example where the file "test.jipl" is executed. 
@@ -33,9 +33,9 @@ public class Main {
 
 ## Using it in the console
 You can run the given jar file directly from the console using `java -jar JIPL.jar`, you will then be able to input any JIPL expression and get the output.
-Or, in a more practical way, you can add a file name as an argument to the command, like `java -jar JIPL.jar test.jipl`; this executes the local file "test.jipl" using JIPL.
+Or, in a more practical way, you can add file names as arguments to the command, like `java -jar JIPL.jar test1.jipl test2.jipl`; this executes the local files `test1.jipl` then `test2.jipl` using JIPL.
 
 # A Quick Documentation :page_with_curl:
-This section will quickly go trough every feature currently available in JIPL, further examples can be found in the `/src/examples` folder.
+This section will quickly go trough every feature currently available in JIPL, further examples can be found in the [`/examples`](https://github.com/HoloInJava/jipl/tree/master/examples) folder. Also, please feel free to suggest any new example from your creation, we`ll gladly add it!
 
 ## Variables
