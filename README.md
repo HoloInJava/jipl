@@ -12,9 +12,12 @@
 </p>
 
 # Overview
-[JIPL](https://github.com/HoloInJava/jipl) is a **free**, **open-source** and **modular** programming language, designed for **simplicity** and **expansibility**. <br>
+[Jipl](https://github.com/HoloInJava/jipl) is a **free**, **open-source** and **modular** programming language, designed for **simplicity** and **expansibility**. <br>
 If your user has to write some code in your Java software, it can be a challenge to make it work properly, and that is *exactly* why we created this project. <br>
-Being as **beginner-friendly** as possible with its **easy syntax**, JIPL offers a [large toolkit](https://github.com/HoloInJava/jipl) of built-in functions while remaining as concise as possible.
+Being as **beginner-friendly** as possible with its **easy syntax**, Jipl offers a [large toolkit](https://github.com/HoloInJava/jipl) of built-in functions while remaining as concise as possible.
+## Projects using Jipl
+ - [Coding in Minecraft](https://github.com/HoloInJava/Code-in-Minecraft), a plugin that lets you write code within the game.
+ - A soon coming full game engine in Java, using Jipl as its custom programming language.
 
 # Quickstart
 After downloading the [`JIPL.jar`](https://github.com/HoloInJava/jipl/raw/master/JIPL.jar) file provided, there is a handful of ways you can use it.
