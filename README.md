@@ -42,10 +42,31 @@ Or, in a more practical way, you can add file names as arguments to the command,
 This section will quickly go trough every feature currently available in JIPL, further examples can be found in the [`/examples`](https://github.com/HoloInJava/jipl/tree/master/examples) folder. Also, please feel free to suggest any new example from your creation, we`ll gladly add it!
 
 ## Variables
+To declare a new variable in the current scope, we use the keyword `var`, even though it is not mandatory, it ensures that the variable you are declaring is within the scope and that you are not modifying a pre-existing variable. <br>
+There is five fundamental variables types in Jipl.
+- Numbers
+- [Strings](#strings)
+- [Lists](#lists)
+- [Functions](#functions)
+- [Objects](#objects)
+Here is a quick example of each one :
 ```python
-var a = 10;
+var age = 18;
+var name = "Holo";
+var projects = ["Jipl", "Code in Minecraft", "JGE"];
+var addition = function(a, b): a+b;
+var file = new File("cool_file.txt");
+
+var yearOfBirth = 2022 - age;
+var fullName = name + "InJava";
+projects.add("more things coming soon");
+print(addition(10, 3));
+print(file.exists());
+
 ```
+
 ### Syntactic sugar
+To add a bit of sweetness into your code and make it more concise, we've added standard syntactic sugar.
 ```python
 a++;
 ```
