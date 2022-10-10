@@ -76,5 +76,14 @@ names+="Mary"; # Adding Mary to the list of names, equivalent to  names.add("Mar
 
 var playerCount = 456;
 playerCount/=2; # Dividing the player count by 2, equivalent to  playerCount = playerCount / 2;
+```
+
+## Control Structures
+### If, else and elseif
+```python
+var age = 18;
+
+if age >= 18: print("You are major.");
+else: print("You are minor.");
 
 ```
