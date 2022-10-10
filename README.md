@@ -62,11 +62,19 @@ var fullName = name + "InJava";
 projects.add("more things coming soon");
 print(addition(10, 3));
 print(file.exists());
-
 ```
 
 ### Syntactic sugar
 To add a bit of sweetness into your code and make it more concise, we've added standard syntactic sugar.
+Here is a quick example :
 ```python
-a++;
+var price = 19.99;
+price*=0.95; # Simulating a 5% discount, equivalent to  price = price * 0.95
+
+var names = ["John", "James", "Robert"];
+names+="Mary"; # Adding Mary to the list of names, equivalent to  names.add("Mary")
+
+var playerCount = 456;
+playerCount/=2; # Dividing the player count by 2, equivalent to  playerCount = playerCount / 2;
+
 ```
