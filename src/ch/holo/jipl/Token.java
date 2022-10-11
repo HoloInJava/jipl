@@ -1,5 +1,7 @@
 package ch.holo.jipl;
 
+import ch.holo.jipl.Token.TokenType;
+
 public class Token {
 		
 	protected TokenType type;
@@ -39,7 +41,7 @@ public class Token {
 	public static enum TokenType {
 		INT, FLOAT, STRING,
 		PLUS, MINUS, MULT, DIV, POWER,
-		DPLUS, DMINUS, PLUS_EQUAL, MINUS_EQUAL,
+		DPLUS, DMINUS, PLUS_EQUAL, MINUS_EQUAL, MULT_EQUAL, DIV_EQUAL,
 		EQUALS, DOUBLE_EQUALS, NOT_EQUALS, LESS, GREATER, LESS_EQUALS, GREATER_EQUALS, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRA, RBRA,
 		COLON, COMMAS, POINT, NLINE,
 		KEYWORD, IDENTIFIER,

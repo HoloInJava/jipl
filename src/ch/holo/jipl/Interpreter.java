@@ -29,7 +29,9 @@ import ch.holo.jipl.Parser.UnaryOperation;
 import ch.holo.jipl.Parser.VarAccessNode;
 import ch.holo.jipl.Parser.VarAddNode;
 import ch.holo.jipl.Parser.VarAssignNode;
+import ch.holo.jipl.Parser.VarDivNode;
 import ch.holo.jipl.Parser.VarModifyNode;
+import ch.holo.jipl.Parser.VarMultNode;
 import ch.holo.jipl.Parser.VarSubNode;
 import ch.holo.jipl.Parser.WhileNode;
 import ch.holo.jipl.Token.TokenType;
@@ -141,7 +143,7 @@ public class Interpreter {
 		protected Object div(Object obj) {
 			if(obj instanceof Number) {
 				Number n = (Number)obj;
-				if(n.value == 0) return new Error.RuntimeError("Division by zero", seq);
+				if(n.value == 0) return new Error.RuntimeError("Division by zero", n.seq);
 				return new Number(value/n.value);
 			} else return illegal_operation(obj);
 		}
@@ -743,6 +745,8 @@ public class Interpreter {
 		else if(node instanceof VarModifyNode) 		return visitVarModifyNode	((VarModifyNode) node, 		context);
 		else if(node instanceof VarAddNode) 		return visitVarAddNode		((VarAddNode) node, 		context);
 		else if(node instanceof VarSubNode) 		return visitVarSubNode		((VarSubNode) node,			context);
+		else if(node instanceof VarMultNode) 		return visitVarMultNode		((VarMultNode) node, 		context);
+		else if(node instanceof VarDivNode) 		return visitVarDivNode		((VarDivNode) node,			context);
 		else if(node instanceof ForNode) 			return visitForNode			((ForNode) node,			context);
 		else if(node instanceof ForInNode) 			return visitForInNode		((ForInNode) node, 			context);
 		else if(node instanceof WhileNode) 			return visitWhileNode		((WhileNode) node, 			context);
@@ -845,7 +849,44 @@ public class Interpreter {
 			Context con = context.getSource(name);
 			con.set(name, ((Value) con.get(name)).sub(value));
 			
-			return con.get(name);
+			return res.success(con.get(name));
+		}
+		
+		return res.success(value);
+	}
+	
+	private Object visitVarMultNode(VarMultNode node, Context context) {
+		RTResult res = new RTResult();
+		
+		String name = (String) node.name.value;
+		Object value = res.register(visit(node.node, context));
+		if(res.shouldReturn()) return res;
+		
+		if(!name.equals("this")) {
+			Context con = context.getSource(name);
+			con.set(name, ((Value) con.get(name)).mult(value));
+			
+			return res.success(con.get(name));
+		}
+		
+		return res.success(value);
+	}
+	
+	private Object visitVarDivNode(VarDivNode node, Context context) {
+		RTResult res = new RTResult();
+		
+		String name = (String) node.name.value;
+		Object value = res.register(visit(node.node, context));
+		if(res.shouldReturn()) return res;
+		
+		if(!name.equals("this")) {
+			Context con = context.getSource(name);
+			Object val = res.register(((Value) con.get(name)).div(value));
+			if(res.shouldReturn()) return res;
+			
+			con.set(name, val);
+			
+			return res.success(con.get(name));
 		}
 		
 		return res.success(value);
@@ -1151,29 +1192,39 @@ public class Interpreter {
 	}
 	
 	private Object visitIncludeNode(IncludeNode node, Context context) {
+		if(node.toInclude.length == 1)
+			return singleInclude(node.toInclude[0], context);
+		
+		RTResult res = new RTResult();
+		for(int i = 0; i < node.toInclude.length; i++) {
+			res.register(singleInclude(node.toInclude[i], context));
+			if(res.shouldReturn()) return res;
+		}
+		return res.success(Number.NULL);
+	}
+	
+	private Object singleInclude(Object node, Context context) {
 		RTResult res = new RTResult();
 		
-		String path = res.register(visit(node.toInclude, context)).toString();
-		File f = new File(new File(context.file).getParent()+"/"+path);
+		String path = res.register(visit(node, context)).toString();
+		if(res.shouldReturn()) return res;
+		
+		File file = new File(new File(context.file).getParent()+"/"+path);
+		
+		if(!file.exists())
+			return res.failure(new RuntimeError("File " + file.getName() + " not found.", null));
+		
+		Context include = new Context(path, context);
 		if(path.endsWith("/")) {
-			Context g = new Context(path, context);
-			for(File file:f.listFiles()) {
-				Context con = JIPL.run(file, context);
-				g.symbols.putAll(con.symbols);
-				g.getterTracks.putAll(con.getterTracks);
-				g.setterTracks.putAll(con.setterTracks);
+			for(File f:file.listFiles()) {
+				Context con = JIPL.run(f, context);
+				include.putAll(con);
 			}
-			context.symbols.putAll(g.symbols);
-			context.getterTracks.putAll(g.getterTracks);
-			context.setterTracks.putAll(g.setterTracks);
-			return res.success(new ObjectValue(g));
-		} else {
-			Context c = JIPL.run(f, context);
-			context.symbols.putAll(c.symbols);
-			context.getterTracks.putAll(c.getterTracks);
-			context.setterTracks.putAll(c.setterTracks);
-			return res.success(new ObjectValue(c));
-		}
+		} else include = JIPL.run(file, context);
+		
+		context.putAll(include);
+		
+		return res.success(new ObjectValue(include));
 	}
 	
 }

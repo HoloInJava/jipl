@@ -36,8 +36,8 @@ public class Lexer {
 			else if(c == '}') list.add(new Token(TokenType.RBRA, new Sequence(line, i, 1, file)));
 			else if(c == '+') i = _unaryComp(chars, i, TokenType.PLUS_EQUAL, TokenType.DPLUS, TokenType.PLUS, line, file, list);
 			else if(c == '-') i = _unaryComp(chars, i, TokenType.MINUS_EQUAL, TokenType.DMINUS, TokenType.MINUS, line, file, list);
-			else if(c == '*') list.add(new Token(TokenType.MULT, new Sequence(line, i, 1, file)));
-			else if(c == '/') list.add(new Token(TokenType.DIV, new Sequence(line, i, 1, file)));
+			else if(c == '*') i = _unaryComp(chars, i, TokenType.MULT_EQUAL, TokenType.MULT, TokenType.MULT, line, file, list);
+			else if(c == '/') i = _unaryComp(chars, i, TokenType.DIV_EQUAL, TokenType.DIV, TokenType.DIV, line, file, list);
 			else if(c == '^') list.add(new Token(TokenType.POWER, new Sequence(line, i, 1, file)));
 			else if(c == ':') list.add(new Token(TokenType.COLON, new Sequence(line, i, 1, file)));
 			else if(c == ',') list.add(new Token(TokenType.COMMAS, new Sequence(line, i, 1, file)));

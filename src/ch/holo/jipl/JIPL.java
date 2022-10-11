@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import ch.holo.jipl.Interpreter.BuildInObjectClass;
-import ch.holo.jipl.Interpreter.Number;
 import ch.holo.jipl.Interpreter.RTResult;
-import ch.holo.jipl.Interpreter.Value;
 import ch.holo.jipl.Parser.ParseResult;
 
 public class JIPL {
@@ -135,25 +132,18 @@ public class JIPL {
 		return context;
 	}
 	
-	public static final Context getGlobalContext() {
+	public static final Context getGlobalContext(Context... inclusions) {
 		Context con = new Context("<Global>", null);
-		
-		con.set("PI", new Number(3.1415927f));
-		con.set("PHI", new Number(1.618034f));
 		
 		JIPLModule.BUILT_IN_FUNCTIONS.generate(con);
 		JIPLModule.MATHS_FUNCTIONS.generate(con);
 		JIPLModule.IO_FUNCTIONS.generate(con);
 		JIPLModule.SCANNER_FUNCTIONS.generate(con);
 		
-		con.set("Object", new BuildInObjectClass("Object") {
-			private static final long serialVersionUID = 1L;
-			protected Object generateObject(Context context, RTResult res, Value... args) {
-				return res.success(Number.NULL);
-			}
-		});
+		for(Context inc:inclusions)
+			con.putAll(inc);
 		
 		return con;
 	}
-		
+	
 }

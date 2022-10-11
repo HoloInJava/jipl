@@ -82,12 +82,22 @@ public abstract class JIPLModule {
 				}
 			});
 			
+			con.set("Object", new BuildInObjectClass("Object") {
+				private static final long serialVersionUID = 1L;
+				protected Object generateObject(Context context, RTResult res, Value... args) {
+					return res.success(Number.NULL);
+				}
+			});
+			
 			return con;
 		}
 	};
 
 	public static final JIPLModule MATHS_FUNCTIONS = new JIPLModule() {
 		public Context generate(Context con, Object... data) {
+			con.set("PI", new Number(3.1415927f));
+			con.set("PHI", new Number(1.618034f));
+			
 			con.set("sin", new BuildInFunction("sin", "value") {
 				private static final long serialVersionUID = 1L;
 				protected Object executeFunction(Context context, RTResult res, Value... args) {
@@ -358,5 +368,10 @@ public abstract class JIPLModule {
 	};
 	
 	public abstract Context generate(Context con, Object... data);
+	public Context generate(Object... data) {
+		Context context = new Context("<module>");
+		generate(context, data);
+		return context;
+	}
 	
 }

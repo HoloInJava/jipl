@@ -111,7 +111,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" = "+node+"}"; }
+		public String toString() { return "Modify{"+name+" += "+node+"}"; }
 	}
 	
 	public static class VarSubNode {
@@ -123,7 +123,31 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" = "+node+"}"; }
+		public String toString() { return "Modify{"+name+" -= "+node+"}"; }
+	}
+	
+	public static class VarMultNode {
+		protected Token name;
+		protected Object node;
+		
+		public VarMultNode(Token name, Object node) {
+			this.name = name;
+			this.node = node;
+		}
+		
+		public String toString() { return "Modify{"+name+" *= "+node+"}"; }
+	}
+	
+	public static class VarDivNode {
+		protected Token name;
+		protected Object node;
+		
+		public VarDivNode(Token name, Object node) {
+			this.name = name;
+			this.node = node;
+		}
+		
+		public String toString() { return "Modify{"+name+" /= "+node+"}"; }
 	}
 	
 	public static class ForNode {
@@ -311,8 +335,8 @@ public class Parser {
 	
 	public static class IncludeNode {
 		
-		protected Object toInclude;
-		public IncludeNode(Object toInclude) {
+		protected Object[] toInclude;
+		public IncludeNode(Object... toInclude) {
 			this.toInclude = toInclude;
 		}
 		
@@ -441,8 +465,20 @@ public class Parser {
 				Object o = pr.register(expression());
 				if(pr.error != null) return pr;
 				return pr.success(new VarSubNode(t, o));
+			} else if(currentToken.matches(TokenType.MULT_EQUAL)) {
+				pr.register_advancement();
+				advance();
+				Object o = pr.register(expression());
+				if(pr.error != null) return pr;
+				return pr.success(new VarMultNode(t, o));
+			} else if(currentToken.matches(TokenType.DIV_EQUAL)) {
+				pr.register_advancement();
+				advance();
+				Object o = pr.register(expression());
+				if(pr.error != null) return pr;
+				return pr.success(new VarDivNode(t, o));
 			}
-			
+				
 			return pr.success(new VarAccessNode(t));
 		} else if(t.matches(TokenType.LSQUARE)) {
 			Object o = pr.register(list_expression());
@@ -506,9 +542,20 @@ public class Parser {
 			pr.register_advancement();
 			advance();
 			advanceNewLines(pr);
-			Object expr = pr.register(expression());
-			if(pr.error != null) return pr;
-			return pr.success(new IncludeNode(expr));
+			
+			ArrayList<Object> toInclude = new ArrayList<>();
+			do {
+				if(currentToken.matches(TokenType.COMMAS)) {
+					pr.register_advancement();
+					advance();
+					advanceNewLines(pr);
+				}
+				Object expr = pr.register(expression());
+				if(pr.error != null) return pr;
+				toInclude.add(expr);
+			} while(currentToken.matches(TokenType.COMMAS));
+			
+			return pr.success(new IncludeNode(toInclude.toArray()));
 		} else if(t.matches(TokenType.LPAREN)) {
 			pr.register_advancement();
 			advance();
