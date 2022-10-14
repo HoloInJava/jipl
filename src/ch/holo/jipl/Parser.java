@@ -7,7 +7,7 @@ import ch.holo.jipl.Interpreter.Number;
 import ch.holo.jipl.Token.TokenType;
 
 public class Parser {
-		
+	
 	public static class NumberNode {
 		
 		protected Token token;
@@ -63,7 +63,7 @@ public class Parser {
 			this.else_case = else_case;
 		}
 		
-		public String toString() { return "if(" + cases + " >> " + else_case + ")"; }
+		public String toString() { return "if " + cases + ": " + else_case + ""; }
 		
 	}
 	
@@ -77,13 +77,13 @@ public class Parser {
 			this.expression = expression;
 		}
 		
-		public String toString() { return "Assign::"+name+"::"+expression; }
+		public String toString() { return ""+name+" = "+expression; }
 	}
 	
 	public static class VarAccessNode {
 		public Token name;
 		public VarAccessNode(Token name) { this.name = name; }
-		public String toString() { return /*"Access::"+*/name.getValue().toString(); }
+		public String toString() { return name.getValue().toString(); }
 	}
 	
 	public static class ThisNode {
@@ -99,7 +99,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" = "+node+"}"; }
+		public String toString() { return name+" = "+node; }
 	}
 	
 	public static class VarAddNode {
@@ -111,7 +111,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" += "+node+"}"; }
+		public String toString() { return name+" += "+node; }
 	}
 	
 	public static class VarSubNode {
@@ -123,7 +123,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" -= "+node+"}"; }
+		public String toString() { return ""+name+" -= "+node+""; }
 	}
 	
 	public static class VarMultNode {
@@ -135,7 +135,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" *= "+node+"}"; }
+		public String toString() { return ""+name+" *= "+node+""; }
 	}
 	
 	public static class VarDivNode {
@@ -147,7 +147,7 @@ public class Parser {
 			this.node = node;
 		}
 		
-		public String toString() { return "Modify{"+name+" /= "+node+"}"; }
+		public String toString() { return ""+name+" /= "+node+""; }
 	}
 	
 	public static class ForNode {
@@ -165,7 +165,7 @@ public class Parser {
 			this.shouldReturnNull = shouldReturnNull;
 		}
 		
-		public String toString() { return "For"+"::"+body; }
+		public String toString() { return "for " + varName.value.toString() + " = " + start +" to "+end+": "+body; }
 		
 	}
 	
@@ -182,7 +182,7 @@ public class Parser {
 			this.shouldReturnNull = shouldReturnNull;
 		}
 		
-		public String toString() { return "ForIn"+"::"+body; }
+		public String toString() { return "for "+varName+" in "+array+": "+body; }
 		
 	}
 	
@@ -197,7 +197,7 @@ public class Parser {
 			this.shouldReturnNull = shouldReturnNull;
 		}
 		
-		public String toString() { return "While::"+condition+"::"+body; }
+		public String toString() { return "while "+condition+": "+body; }
 		
 	}
 	
@@ -298,8 +298,8 @@ public class Parser {
 		
 	}
 	
-	public static class ContinueNode {}
-	public static class BreakNode {}
+	public static class ContinueNode { public String toString() { return "continue"; } }
+	public static class BreakNode { public String toString() { return "break"; } }
 	
 	public static class ObjectDefNode {
 		
@@ -332,6 +332,15 @@ public class Parser {
 		public String toString() { return "Instantiate of "+nodeToCall; }
 		
 	}
+	
+//	public static class IncludeNode {
+//		
+//		protected Object toInclude;
+//		public IncludeNode(Object toInclude) {
+//			this.toInclude = toInclude;
+//		}
+//		
+//	}
 	
 	public static class IncludeNode {
 		
@@ -402,7 +411,7 @@ public class Parser {
 	
 	private Token reverse(int amount) {
 		index-=amount;
-		if(JIPL.debug) System.out.println("Parser: Reversing "+amount);
+		debug("Parser: Reversing "+amount);
 		updateCurrentToken();
 		return currentToken;
 	}
@@ -478,7 +487,7 @@ public class Parser {
 				if(pr.error != null) return pr;
 				return pr.success(new VarDivNode(t, o));
 			}
-				
+			
 			return pr.success(new VarAccessNode(t));
 		} else if(t.matches(TokenType.LSQUARE)) {
 			Object o = pr.register(list_expression());
@@ -565,7 +574,6 @@ public class Parser {
 			if(currentToken.matches(TokenType.RPAREN)) {
 				pr.register_advancement();
 				advance();
-				advanceNewLines(pr);
 				return pr.success(ex);
 			} else return pr.failure(new Error.SyntaxError("Expected ')'", currentToken.getSeq()));
 		} else if(t.matches(TokenType.LBRA)) {
@@ -585,7 +593,7 @@ public class Parser {
 	}
 	
 	private ParseResult statements() {
-		if(JIPL.debug) System.out.println("Parser: multi-lines statements");
+		debug("Parser: multi-lines statements");
 		
 		ParseResult pr = new ParseResult();
 		ArrayList<Object> statements = new ArrayList<Object>();
@@ -610,7 +618,6 @@ public class Parser {
 			}
 			if(newline_count == 0) more = false;
 			
-			
 			if(!more) break;
 			stat = pr.try_register(statement());
 			if(pr.error != null)
@@ -624,13 +631,13 @@ public class Parser {
 			statements.add(stat);
 		}
 		
-		if(JIPL.debug) System.out.println("Parser: " + statements);
+		debug("Parser: " + statements);
 		
 		return pr.success(new StatementsNode(statements));
 	}
 	
 	private ParseResult statement() {
-		if(JIPL.debug) System.out.println("Parser: single statement");
+		debug("Parser: single statement");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -659,7 +666,7 @@ public class Parser {
 	}
 	
 	private ParseResult list_expression() {
-		if(JIPL.debug) System.out.println("Parser: List node");
+		debug("Parser: List node");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -830,7 +837,7 @@ public class Parser {
 	}
 	
 	private ParseResult for_expression() {
-		if(JIPL.debug) System.out.println("Parser: for");
+		debug("Parser: for");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -873,9 +880,13 @@ public class Parser {
 
 				Object body = pr.register(statements());
 				if(pr.error != null) return pr;
+
+//				pr.register_advancement();
+//				advance();
+//				advanceNewLines(pr);
 				
 				if(!currentToken.matches(TokenType.RBRA))
-					return pr.failure(new Error.SyntaxError("Expected '}'", currentToken.getSeq()));
+					return pr.failure(new Error.SyntaxError("Expected '}' FORIN", currentToken.getSeq()));
 				
 				pr.register_advancement();
 				advance();
@@ -960,7 +971,7 @@ public class Parser {
 	}
 	
 	private ParseResult while_expression() {
-		if(JIPL.debug) System.out.println("Parser: while");
+		debug("Parser: while");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -1003,7 +1014,7 @@ public class Parser {
 	}
 	
 	private ParseResult function_expression() {
-		if(JIPL.debug) System.out.println("Parser: function");
+		debug("Parser: function");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -1094,7 +1105,7 @@ public class Parser {
 	}
 	
 	private ParseResult object_expression() {
-		if(JIPL.debug) System.out.println("Parser: object");
+		debug("Parser: object");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -1263,7 +1274,7 @@ public class Parser {
 		if(pr.error != null) return pr;
 		
 		if(currentToken.matches(TokenType.LPAREN)) {
-			if(JIPL.debug) System.out.println("Parser: call_"+atom);
+			debug("Parser: Call "+atom);
 			pr.register_advancement();
 			advance();
 			advanceNewLines(pr);
@@ -1394,7 +1405,7 @@ public class Parser {
 	}
 	
 	private ParseResult expression() {
-		if(JIPL.debug) System.out.println("Parser: expression");
+		debug("Parser: expression");
 		
 		ParseResult pr = new ParseResult();
 		
@@ -1415,25 +1426,30 @@ public class Parser {
 			if(!currentToken.matches(TokenType.EQUALS))
 				return pr.failure(new Error.SyntaxError("Expected '='", currentToken.getSeq()));
 				
-				pr.register_advancement();
-				advance();
-				advanceNewLines(pr);
-				
-				Object o = pr.register(expression());
-				if(pr.error != null) return pr;
-				
-				return pr.success(new VarAssignNode(vname, o));
-			}
+			pr.register_advancement();
+			advance();
+			advanceNewLines(pr);
 			
-			Object o = pr.register(comp_binop());
+			Object o = pr.register(expression());
 			if(pr.error != null) return pr;
 			
-			return pr.success(o);
+			return pr.success(new VarAssignNode(vname, o));
 		}
 		
-		public Object parse() {
-			ParseResult pr = (ParseResult) statements();
-			return pr;
-		}
+		Object o = pr.register(comp_binop());
+		if(pr.error != null) return pr;
 		
+		return pr.success(o);
 	}
+	
+	public Object parse() {
+		ParseResult pr = (ParseResult) statements();
+		return pr;
+	}
+	
+	public void debug(Object obj) {
+		if(JIPL.debug)
+			System.out.println("" + obj + " " + currentToken);
+	}
+	
+}
