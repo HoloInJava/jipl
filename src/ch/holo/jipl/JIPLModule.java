@@ -114,6 +114,16 @@ public abstract class JIPLModule {
 				}
 			});
 			
+			con.set("atan2", new BuildInFunction("atan2", "y", "x") {
+				private static final long serialVersionUID = 1L;
+				protected Object executeFunction(Context context, RTResult res, Value... args) {
+					res.register(checkArgumentTypes(res, args, Number.class, Number.class));
+					if(res.shouldReturn()) return res;
+					
+					return res.success(new Number(Math.atan2(context.number("y"), context.number("x"))));
+				}
+			});
+			
 			con.set("min", new BuildInFunction("min", "a", "b") {
 				private static final long serialVersionUID = 1L;
 				protected Object executeFunction(Context context, RTResult res, Value... args) {
@@ -146,6 +156,16 @@ public abstract class JIPLModule {
 					res.register(checkArgumentTypes(res, args, Number.class, Number.class, Number.class));
 					if(res.shouldReturn()) return res;
 					return res.success(new Number(Math.max(context.number("min"), Math.min(context.number("max"), context.number("value")))));
+				}
+			});
+			
+			con.set("map", new BuildInFunction("map", "value", "rmin", "rmax", "nmin", "nmax") {
+				private static final long serialVersionUID = 1L;
+				protected Object executeFunction(Context context, RTResult res, Value... args) {
+					res.register(checkArgumentTypes(res, args, Number.class, Number.class, Number.class, Number.class, Number.class));
+					if(res.shouldReturn()) return res;
+					
+					return res.success(new Number(context.number("nmin")+((Math.abs(context.number("rmin"))+context.number("value"))/(Math.abs(context.number("rmin"))+Math.abs(context.number("rmax"))))*(context.number("nmax")-context.number("nmin"))));
 				}
 			});
 			
@@ -228,6 +248,14 @@ public abstract class JIPLModule {
 				}
 			});
 			
+			con.set("exp", new BuildInFunction("exp", "value") {
+				private static final long serialVersionUID = 1L;
+				protected Object executeFunction(Context context, RTResult res, Value... args) {
+					if(args[0] instanceof Number) return res.success(new Number((float)Math.exp(((Number) args[0]).value)));
+					return res.failure(new IllegalArgumentError(name, args[0], args[0].seq));
+				}
+			});
+			
 			con.set("distance", new BuildInFunction("distance", "x1", "y1", "x2", "y2") {
 				private static final long serialVersionUID = 1L;
 				protected Object executeFunction(Context context, RTResult res, Value... args) {
@@ -258,9 +286,11 @@ public abstract class JIPLModule {
 		public Context generate(Context st, Object... data) {
 			st.set("File", new BuildInObjectClass("File", "path") {
 				private static final long serialVersionUID = 1L;
-				protected Object generateObject(Context context, RTResult res, Value... args) {
+				protected Object generateObject(Context conFile, RTResult res, Value... args) {
 					
 					File f = new File(args[0].toString());
+					
+					st.set("path", new StringValue(f.getPath()));
 					
 					st.set("createNewFile", new BuildInFunction("createNewFile") {
 						private static final long serialVersionUID = 1L;
@@ -292,6 +322,33 @@ public abstract class JIPLModule {
 						private static final long serialVersionUID = 1L;
 						protected Object executeFunction(Context context, RTResult res, Value... args) {
 							return res.success(f.exists()?Number.TRUE:Number.FALSE);
+						}
+					});
+					
+					st.set("isDirectory", new BuildInFunction("isDirectory") {
+						private static final long serialVersionUID = 1L;
+						protected Object executeFunction(Context context, RTResult res, Value... args) {
+							return res.success(f.isDirectory()?Number.TRUE:Number.FALSE);
+						}
+					});
+					
+					st.set("list", new BuildInFunction("list") {
+						private static final long serialVersionUID = 1L;
+						protected Object executeFunction(Context context, RTResult res, Value... args) {
+							ArrayList<Object> elements = new ArrayList<>();
+							for(String s:f.list())
+								elements.add(new StringValue(s));
+							return res.success(new List(elements));
+						}
+					});
+					
+					st.set("listFiles", new BuildInFunction("listFiles") {
+						private static final long serialVersionUID = 1L;
+						protected Object executeFunction(Context context, RTResult res, Value... args) {
+							ArrayList<Object> elements = new ArrayList<>();
+							for(File s:f.listFiles())
+								elements.add(new StringValue(""+s));
+							return res.success(new List(elements));
 						}
 					});
 					
