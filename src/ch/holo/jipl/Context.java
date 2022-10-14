@@ -13,7 +13,7 @@ import ch.holo.jipl.Interpreter.ObjectValue;
 import ch.holo.jipl.Interpreter.StringValue;
 
 public class Context implements Serializable {
-		
+	
 	private static final long serialVersionUID = 1L;
 	public String displayName, file;
 	public Context parent = null;
@@ -75,6 +75,7 @@ public class Context implements Serializable {
 	}
 	
 	public Object get(String name) {
+		//System.out.println(name +":" +displayName);
 		if(symbols.containsKey(name)) {
 			if(getterTracks.containsKey(name))
 				try { symbols.put(name, Context.appropriateObjectConverter(getterTracks.get(name).call())); } catch (Exception e) { e.printStackTrace(); }
@@ -124,10 +125,12 @@ public class Context implements Serializable {
 
 	public HashMap<String, Object> getSymbols() { return symbols; }
 	
-	public void putAll(Context con) {
-		symbols.putAll(con.symbols);
-		getterTracks.putAll(con.getterTracks);
-		setterTracks.putAll(con.setterTracks);
+	public void putAll(Context... cons) {
+		for(Context con:cons) {
+			symbols.putAll(con.symbols);
+			getterTracks.putAll(con.getterTracks);
+			setterTracks.putAll(con.setterTracks);
+		}
 	}
 	
 	public void remove(String name) { symbols.remove(name); }
