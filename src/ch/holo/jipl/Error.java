@@ -10,8 +10,10 @@ public abstract class Error {
 			super("Illegal Character Error", text, seq);
 		}
 
-		public void call(String... args) {
-			System.err.println(name + " : Illegal character '" + text + "'" + (seq!=null?" at " + seq.toString():""));
+		public String call(String... args) {
+			String str = name + " : Illegal character '" + text + "'" + (seq!=null?" at " + seq.toString():"");
+			System.err.println(str);
+			return str;
 		}
 		
 	}
@@ -22,8 +24,10 @@ public abstract class Error {
 			super("Expected Character Error", text, seq);
 		}
 
-		public void call(String... args) {
-			System.err.println(name + " : Expected character '" + text + "'" + (seq!=null?" at " + seq.toString():""));
+		public String call(String... args) {
+			String str = name + " : Expected character '" + text + "'" + (seq!=null?" at " + seq.toString():"");
+			System.err.println(str);
+			return str;
 		}
 		
 	}
@@ -34,8 +38,10 @@ public abstract class Error {
 			super("Syntax Error", text, seq);
 		}
 
-		public void call(String... args) {
-			System.err.println(name + " : " + getText() + (seq!=null?" at " + seq.toString():""));
+		public String call(String... args) {
+			String str = name + " : " + getText() + (seq!=null?" at " + seq.toString():"");
+			System.err.println(str);
+			return str;
 		}
 		
 	}
@@ -50,12 +56,14 @@ public abstract class Error {
 			super(name, text, seq);
 		}
 
-		public void call(String... args) {
-			System.err.println(name + " : " + text + (seq!=null?" at " + seq.toString():""));
+		public String call(String... args) {
+			String str = name + " : " + text + (seq!=null?" at " + seq.toString():"");
 			for(int i = 0; i < trace.size(); i++) {
 				Token t = trace.get(i);
-				System.err.println("     "+t.value +" at "+t.seq+"");
+				str += "     "+t.value +" at "+t.seq+"";
 			}
+			System.err.println(str);
+			return str;
 		}
 		
 	}
@@ -90,7 +98,7 @@ public abstract class Error {
 			super("Stop", text, seq);
 		}
 
-		public void call(String... args) {}
+		public String call(String... args) { return "stop"; }
 		
 	}
 	
@@ -112,5 +120,5 @@ public abstract class Error {
 	public Sequence getSeq() { return seq; }
 	public Error add(Token t) { trace.add(t); return this; }
 	
-	public abstract void call(String... args);
+	public abstract String call(String... args);
 }
