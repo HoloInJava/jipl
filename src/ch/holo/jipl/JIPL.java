@@ -12,7 +12,7 @@ import ch.holo.jipl.Parser.ParseResult;
 
 public class JIPL {
 	
-	public static final boolean debug = false, performance = false;
+	public static boolean debug = false, performance = false;
 	public static boolean stop = false;
 	
 	public static void stop() { stop = true; }
@@ -139,6 +139,8 @@ public class JIPL {
 		JIPLModule.MATHS_FUNCTIONS.generate(con);
 		JIPLModule.IO_FUNCTIONS.generate(con);
 		JIPLModule.SCANNER_FUNCTIONS.generate(con);
+		
+		con.set("debug", debug, (e) -> debug = ((float)e)==1.0f, () -> debug);
 		
 		for(Context inc:inclusions)
 			con.putAll(inc);
