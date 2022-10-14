@@ -37,7 +37,7 @@ import ch.holo.jipl.Parser.WhileNode;
 import ch.holo.jipl.Token.TokenType;
 
 public class Interpreter {
-		
+	
 	public static class Value implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
@@ -51,12 +51,12 @@ public class Interpreter {
 		
 		public Context getContext() { return context; }
 		
-		public Value setContext(Context context) {
+		public Value setContext(Context context) { // TODO: review this
 			if(context == this.context)
 				return this;
 			if(this.context != null)
 				this.context.newParent(context);
-			this.context = context;
+			else this.context = context;
 			return this;
 		}
 		
@@ -656,8 +656,8 @@ public class Interpreter {
 	public static class RTResult {
 		
 		public Object value = null, returnValue = null;
-		protected Error error = null;
-		protected boolean shouldContinue = false, shouldBreak = false;
+		public Error error = null;
+		public boolean shouldContinue = false, shouldBreak = false;
 		public Token associatedToken;
 		
 		public void reset() {
@@ -783,6 +783,7 @@ public class Interpreter {
 		res.associatedToken = node.name;
 		
 		if(value == Number.NULL) {
+//			System.out.println("CON " + context + " " + context.symbols);
 			return res.failure(new Error.NullPointerError(vname + " is not defined", node.name.getSeq()));
 		}
 		
@@ -946,9 +947,12 @@ public class Interpreter {
 			if(res.shouldReturn()) return res;
 			
 			if(((Number) condition_value).isTrue()) {
-				Context newContext = new Context("<if>", context);
+				Context newContext = new Context("<if "+condition+">", context);
 				Object expression_value = res.register(visit(expression, newContext));
-				if(res.shouldReturn()) return res;
+				if(res.shouldReturn()) {
+					//System.out.println("   Should return.");
+					return res;
+				}
 				
 				return res.success(cdn.shouldReturnNull?Number.NULL:expression_value);
 			}
@@ -1012,13 +1016,16 @@ public class Interpreter {
 			return res.failure(new Error.RuntimeError("'"+objList + "' is not a list.", null));
 		ArrayList<Object> array = ((List) objList).elements; 
 		
-		Context newContext = new Context("<forin>", context);
+		Context newContext = new Context("<forin "+node.varName.value+">", context);
 		
 		for(int i = 0; i < array.size(); i++) {
 			newContext.set((String) node.varName.value, array.get(i));
 			
 			Object value = res.register(visit(node.body, newContext));
-			if(res.shouldReturn() && !res.shouldContinue && !res.shouldBreak) return res;
+			if(res.shouldReturn() && !res.shouldContinue && !res.shouldBreak) {
+				//System.out.println("  For: should return");
+				return res;
+			}
 			
 			if(res.shouldContinue) continue;
 			if(res.shouldBreak) break;
@@ -1199,6 +1206,17 @@ public class Interpreter {
 		for(int i = 0; i < node.toInclude.length; i++) {
 			res.register(singleInclude(node.toInclude[i], context));
 			if(res.shouldReturn()) return res;
+//			String path = res.register(visit(node.toInclude, context)).toString();
+//			File f = new File(new File(context.file).getParent()+"/"+path);
+//			if(path.endsWith("/")) {
+//				for(File file:f.listFiles()) {
+//					Context con = JIPL.run(file, context);
+//					g.putAll(con);
+//				}
+//				context.putAll(g);
+//			} else {
+//				context.putAll(JIPL.run(f, context));
+//			}
 		}
 		return res.success(Number.NULL);
 	}
