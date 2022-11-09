@@ -35,11 +35,11 @@ public class Main {
 ```
 
 ## Using it in the console
-You can run the given jar file directly from the console using `java -jar JIPL.jar`, you will then be able to input any JIPL expression and get the output.
-Or, in a more practical way, you can add file names as arguments to the command, like `java -jar JIPL.jar test1.jipl test2.jipl`; this executes the local files `test1.jipl` then `test2.jipl` using JIPL.
+You can run the given jar file directly from the console using `java -jar JIPL.jar`, you will then be able to input any Jipl expression and get the output.
+Or, in a more practical way, you can add file names as arguments to the command, like `java -jar JIPL.jar test1.jipl test2.jipl`; this executes the local files `test1.jipl` then `test2.jipl` using Jipl.
 
 # A Quick Documentation :page_with_curl:
-This section will quickly go trough every feature currently available in JIPL, further examples can be found in the [`/examples`](https://github.com/HoloInJava/jipl/tree/master/examples) folder. Also, please feel free to suggest any new example from your creation, we`ll gladly add it!
+This section will quickly go trough every feature currently available in Jipl, further examples can be found in the [`/examples`](https://github.com/HoloInJava/jipl/tree/master/examples) folder. Also, please feel free to suggest any new example from your creation, we`ll gladly add it!
 
 ## Variables
 To declare a new variable in the current scope, we use the keyword `var`, even though it is not mandatory, it ensures that the variable you are declaring is within the scope and that you are not modifying a pre-existing variable. <br>
@@ -78,12 +78,58 @@ var playerCount = 456;
 playerCount/=2; # Dividing the player count by 2, equivalent to  playerCount = playerCount / 2;
 ```
 
-## Control Structures
+## Control Structure
+As expected, Jipl has every control structure you'll ever need.
 ### If, else and elseif
 ```python
 var age = 18;
 
-if age >= 18: print("You are major.");
-else: print("You are minor.");
+if age >= 18 {
+  print("You are major.");
+  
+  if age <= 23: print("You're in college.");
+} else {
+  print("You are minor.");
+  
+  if age >= 15: print("You're in high school.");
+  else if age >= 11: print("You're in middle school");
+}
+```
 
+### For
+```python
+for i = 0 to 10 {
+  print(i);
+} # Prints every integer from 0 to 9
+
+var even = for i = 0 to 20 by 2: i; # Creates a list of every pair number under 20, and stores it in "even"
+
+for p in even {
+  if p % 2 == 1: break; # Stops the loop if it detects an odd number
+  print(p);
+} # Prints the content of even;
+```
+
+### While
+```python
+var x = 123.4;
+
+while x >= 1: x/=10;
+print(x); # Prints 0.1234
+```
+
+### Functions
+```python
+function fun(x) {
+  return 1 / x^2;
+}
+
+for i = -5 to 5: print(fun(i)); # Prints every image of integers in [-5, 5[
+
+# Optional arguments
+
+function present(name = "User"): print("Hi, my name is " + name);
+
+present(name = "John"); # Prints "Hi, my name is John".
+present(); # Prints "Hi, my name is User";
 ```
